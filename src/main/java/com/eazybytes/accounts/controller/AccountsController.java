@@ -1,6 +1,7 @@
 package com.eazybytes.accounts.controller;
 
 import com.eazybytes.accounts.constants.AccountConstants;
+import com.eazybytes.accounts.dto.AccountsContactInfoDto;
 import com.eazybytes.accounts.dto.CustomerDto;
 import com.eazybytes.accounts.dto.ErrorResponseDto;
 import com.eazybytes.accounts.dto.ResponseDto;
@@ -15,7 +16,9 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +36,10 @@ public class AccountsController {
 
     @Value("${build.version}")
     private String buildVersion;
+
+    private final Environment environment;
+
+    private final AccountsContactInfoDto accountsContactInfoDto;
 
     @PostMapping("/create")
     @Operation(
@@ -98,4 +105,15 @@ public class AccountsController {
         return ResponseEntity.status(HttpStatus.OK).body(buildVersion);
     }
 
+    @GetMapping("/java-version")
+    public ResponseEntity<String> getJavaVersion() {
+        System.out.println(environment.getProperty("MAVEN_HOME"));
+        return ResponseEntity.status(HttpStatus.OK).body(environment.getProperty("MAVEN_HOME"));
+    }
+
+    @GetMapping("/contactInfo")
+    public ResponseEntity<AccountsContactInfoDto> getContactInfo() {
+        System.out.println(environment.getProperty("MAVEN_HOME"));
+        return ResponseEntity.status(HttpStatus.OK).body(accountsContactInfoDto);
+    }
 }

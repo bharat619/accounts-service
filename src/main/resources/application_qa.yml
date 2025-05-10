@@ -1,0 +1,15 @@
+spring:
+  config:
+    activate:
+      on-profile: qa
+build:
+  version: 2.0
+
+accounts:
+  message: "Welcome to QA accounts API"
+  contactDetails:
+    name: "John QA"
+    email: "johnqa@gmail.com"
+  onCallSupport:
+    - (555) 555-523
+    - (555) 523-521
