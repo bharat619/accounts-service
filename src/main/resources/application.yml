@@ -1,6 +1,8 @@
 spring:
   application:
     name: accounts
+  profiles:
+    active: 'prod'
   datasource:
     url: jdbc:h2:mem:accounts
     username: sa
@@ -14,21 +16,4 @@ spring:
       ddl-auto: update
     show-sql: true
   config:
-    import:
-      - application_qa.yml
-      - application_prod.yml
-  profiles:
-    active:
-      - qa
-
-build:
-  version: 3.0
-
-accounts:
-  message: "Welcome to accounts API"
-  contactDetails:
-    name: "John"
-    email: "john@gmail.com"
-  onCallSupport:
-    - (555) 555-123
-    - (555) 523-321
+    import: "optional:configserver:http://localhost:8071/"
