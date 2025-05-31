@@ -6,6 +6,8 @@ import com.eazybytes.accounts.dto.CustomerDto;
 import com.eazybytes.accounts.dto.ErrorResponseDto;
 import com.eazybytes.accounts.dto.ResponseDto;
 import com.eazybytes.accounts.service.IAccountService;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,6 +18,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -33,7 +37,7 @@ import org.springframework.web.bind.annotation.*;
 
 public class AccountsController {
     private final IAccountService iAccountService;
-
+    private  static final Logger logger = LoggerFactory.getLogger(AccountsController.class);
     @Value("${build.version}")
     private String buildVersion;
 
@@ -100,11 +104,20 @@ public class AccountsController {
         }
     }
 
+    @Retry(name = "getBuildInfo", fallbackMethod = "getBuildInfoFallback")
     @GetMapping("/build-info")
     public ResponseEntity<String> getBuildInfo() {
-        return ResponseEntity.status(HttpStatus.OK).body(buildVersion);
+        logger.debug("getBuildInfo() invoked");
+        throw new NullPointerException();
+//        return ResponseEntity.status(HttpStatus.OK).body(buildVersion);
     }
 
+    public ResponseEntity<String>  getBuildInfoFallback(Throwable throwable) {
+        logger.debug("getBuildInfoFallback() invoked");
+        return ResponseEntity.status(HttpStatus.OK).body("0,9");
+    }
+
+    @RateLimiter(name = "getJavaVersion", fallbackMethod = "getJavaVersionFallback")
     @GetMapping("/java-version")
     public ResponseEntity<String> getJavaVersion() {
         System.out.println(environment.getProperty("MAVEN_HOME"));
@@ -115,5 +128,10 @@ public class AccountsController {
     public ResponseEntity<AccountsContactInfoDto> getContactInfo() {
         System.out.println(environment.getProperty("MAVEN_HOME"));
         return ResponseEntity.status(HttpStatus.OK).body(accountsContactInfoDto);
+    }
+
+    public ResponseEntity<String> getJavaVersionFallback(Throwable throwable) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Java 17");
     }
 }

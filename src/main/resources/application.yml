@@ -14,6 +14,10 @@ spring:
       mode: always
   config:
     import: "optional:configserver:http://localhost:8071/"
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
 management:
   endpoints:
     web:
@@ -56,3 +60,28 @@ logging:
     com:
       eazybytes:
         accounts: DEBUG
+
+resilience4j.circuitbreaker:
+  configs:
+    default:
+      slidingWindowSize: 10 # how many request it needs to monitor before changing status from open to close
+      permittedNumberOfCallsInHalfOpenState: 2 # circuitbreaker will permit 2 request in half open state
+      failureRateThreshold: 50 # if 50% of request fail, it moves to open state
+      waitDurationInOpenState: 10000 # wait 10s to move to half open state and allow traffic
+
+resilience4j.retry:
+  configs:
+    default:
+      maxAttempts: 3
+      waitDuration: 500
+      enableExponentialBackoff: true
+      exponentialBackoffMultiplier: 2
+      ignoreExceptions:
+        - java.lang.NullPointerException
+
+resilience4j.ratelimiter:
+  configs:
+    default:
+      timeoutDuration: 1000
+      limitRefreshPeriod: 5000
+      limitForPeriod: 1

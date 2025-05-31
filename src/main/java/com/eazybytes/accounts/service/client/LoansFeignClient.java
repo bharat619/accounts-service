@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 // The value loans should be same as that registered in eureka client
 // The feign client makes a request to eureka and get's the instance of loans service
 // That info is cached for 30seconds by default and it automatically makes request to loans service
-@FeignClient("loans")
+@FeignClient(name = "loans", fallback = LoansFallback.class)
 public interface LoansFeignClient {
     @GetMapping(value = "/api/fetch", consumes = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<LoanDto> fetchLoanDetails(@RequestHeader("eazybank-correlation-id") String correlationId, @RequestParam String mobileNumber);

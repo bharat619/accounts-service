@@ -87,6 +87,10 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-openfeign</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-circuitbreaker-resilience4j</artifactId>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
@@ -135,7 +139,7 @@
 				<version>3.4.5</version>
 				<configuration>
 					<to>
-						<image>bharatt619/${project.artifactId}:s9</image>
+						<image>bharatt619/${project.artifactId}:s10</image>
 					</to>
 				</configuration>
 			</plugin>
